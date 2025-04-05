@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Smart Gesture Recognition</title>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+		integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+
+</head>
+
+<body>
+	
+	<!-- Header -->
+	<section class="header">
+        <h1 class="header-heading">
+            Transform Motion into Meaning with Deep Learning
+        </h1>
+        <ul class="nav-links">
+            <li>
+				<a href="./" class="nav-item">
+					<div class="icon-container">
+						<img src="{{ url_for('static', filename='assets/image.svg') }}" alt="image" width="24" height="24">
+					</div>
+					<p class="nav-text">Image Prediction</p>
+				</a>
+				
+            </li>
+            <li>
+                <a href="/live" class="nav-item">
+                    <div class="icon-container">
+						<img src="{{ url_for('static', filename='assets/live-icon-png-2.jpg') }}" alt="image" width="24" height="24">
+                    </div>
+                    <p class="nav-text">Live Prediction</p>
+                </a>
+            </li>
+            <li>
+                <a href="./" class="nav-item">
+                    <div class="icon-container">
+						<img src="{{ url_for('static', filename='assets/ML.png') }}" alt="image" width="24" height="24">
+                    </div>
+                    <p class="nav-text">Train Model</p>
+                </a>
+            </li>
+            <!-- <li>
+                <a href="link4.html" class="nav-item">
+                    <div class="icon-container">
+                        <img src="icon4.png" alt="image" width="24" height="24">
+                    </div>
+                    <p class="nav-text">About Us</p>
+                </a>
+            </li> -->
+        </ul>
+    </section>
+  
+  <!-- Page Content -->
+  <!-- Page Content -->
+<div class="container">
+    <form class="input-group upload-data row ">
+        <div class="col-xl-6 col-md-6 col-sm-6 ">
+            <button type="button" class="btn btn-primary col-12" id="uload">Upload</button>
+        </div>
+        <div class="col-xl-6 col-md-6 col-sm-6">
+            <button id="send" type="button" class="btn btn-success col-12">Predict</button>
+        </div>
+        <input type="hidden" class="form-control mr-2" id="url" value="../predict" />
+        <input name="upload" type="file" id="fileinput" style="position:absolute;top:-500px; display: none;" /><br />
+    </form>
+
+    <div class="row">
+        <!-- Upload Image Card -->
+        <div class="col-xl-6 col-md-6 col-sm-6 mb-4">
+            <div class="card upload-image">
+                <video autoplay id="video" poster="https://img.freepik.com/free-vector/group-young-people-posing-photo_52683-18824.jpg?size=338&ext=jpg"></video>
+                <img src="" id="photo">
+                <canvas style="display:none;" id="canvas"></canvas>
+            </div>
+        </div>
+        <!-- Prediction Results Card -->
+        <div class="col-xl-6 col-md-6 col-sm-6 mb-4">
+            <div class="card res-part2 text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Prediction Results</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+	<div id="loading">
+		<div class="loader"></div>
+	</div>
+
+
+	<!-- ########### Script ########### -->
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+	</script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+	</script>
+
+	<script>
+		var mybtn = document.getElementById('startbtn');
+		var myvideo = document.getElementById('video');
+		var mycanvas = document.getElementById('canvas');
+		var myphoto = document.getElementById('photo');
+		var base_data = "";
+
+		function sendRequest(base64Data) {
+			var type = "json";
+			if (base64Data != "" || base64Data != null) {
+				if (type == "imgtobase") {
+					$(".res-part").html("");
+					$(".res-part").html(base64Data);
+				} else if (type == "basetoimg") {
+					var imageData = $("#imgstring").val();
+					$(".res-part").html("");
+					$(".res-part").append("<img src='data:image/jpeg;base64," + imageData + "' alt='' />");
+				} else {
+					var url = $("#url").val();
+					$("#loading").show();
+					$.ajax({
+						url: url,
+						type: "post",
+						cache: false,
+						async: true,
+						crossDomain: true,
+						headers: {
+							'Content-Type': 'application/json',
+							'Access-Control-Allow-Origin': '*'
+						},
+						data: JSON.stringify({
+							image: base64Data
+						}),
+						success: function (res) {
+							$(".res-part").html("");
+							$(".res-part2").html("");
+							var imageData = res.image;
+							$(".res-part2").append("<img class='resp-img' src='data:image/jpeg;base64," +
+								imageData + "' alt='' />");
+							// $(".res-part").html("<pre>" + JSON.stringify(res[0], undefined, 2) + "</pre>");
+							$("#loading").hide();
+						}
+					});
+				}
+			}
+		}
+
+		$(document).ready(function () {
+			$("#loading").hide();
+
+			$('#send').click(function (evt) {
+				sendRequest(base_data);
+			});
+
+			$('#uload').click(function (evt) {
+				$('#fileinput').focus().trigger('click');
+			});
+			$("#fileinput").change(function () {
+				if (this.files && this.files[0]) {
+					var reader = new FileReader();
+					reader.onload = function (e) {
+						var url = e.target.result;
+						var img = new Image();
+						img.crossOrigin = 'Anonymous';
+						img.onload = function () {
+							var canvas = document.createElement('CANVAS');
+							var ctx = canvas.getContext('2d');
+							canvas.height = this.height;
+							canvas.width = this.width;
+							ctx.drawImage(this, 0, 0);
+							base_data = canvas.toDataURL('image/jpeg', 1.0).replace(
+								/^data:image.+;base64,/, '');
+							canvas = null;
+						};
+						img.src = url;
+						$('#photo').attr('src', url);
+						$('#photo').show();
+						$('#video').hide();
+					}
+					reader.readAsDataURL(this.files[0]);
+				}
+			});
+		});
+	</script>
+</body>
+
+</html>
