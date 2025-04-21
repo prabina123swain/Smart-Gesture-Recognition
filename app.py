@@ -67,7 +67,8 @@ def predictLive():
         #os.system('cd yolov5/ && python detect.py --weights "Model_Batch1.1.pt" --img 416 --conf 0.5 --source 0')
         #os.system('cd yolov5/ && python detect.py --weights "Model_Batch2.1.pt" --img 416 --conf 0.5 --source 0')
         #os.system('cd yolov5/ && python detect.py --weights "Model_Batch3.pt" --img 416 --conf 0.5 --source 0')
-        os.system('cd yolov5/ && python detect.py --weights "Model_Batch_All1.1.pt" --img 416 --conf 0.5 --source 0')
+        #os.system('cd yolov5/ && python detect.py --weights "Model_Batch_All1.1.pt" --img 416 --conf 0.5 --source 0')
+        os.system('cd yolov5/ && python detect.py --weights "ALL_BATCH1.1.pt" --img 416 --conf 0.5 --source 0')
 
         os.system("rm -rf yolov5/runs")
         return "Camera starting!!" 
